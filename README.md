@@ -28,12 +28,18 @@
 4. Use a tecla **S** para entrar no modo de seleção
 5. Clique nos polígonos para identificá-los
 6. Feche a janela para salvar o log
+7. Execute o programa: 'analise.py'
+8. Feche o primeiro gráfico para ver o segundo e assim por diante.
+9. O terceiro gráfico só sera criado se no "modo seleção" houver cliques nos poligonos
 
 ### Dependências
 
 - pygame
 - scipy (para algoritmo de Voronoi)
 - numpy
+- shapely
+- panda
+- matplotlib
 
 ### Instalação das Dependências
 

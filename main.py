@@ -3,7 +3,7 @@ import time
 import csv
 import math
 from datetime import datetime
-from scipy.spatial import Voronoi
+from scipy.spatial import Voronoi, Delaunay
 import numpy as np
 
 # --- Cores ---
@@ -109,7 +109,7 @@ def gerar_diagrama_voronoi(pontos, largura_tela, altura_tela):
 
     try:
         array_pontos = np.array(pontos)
-        vor = Voronoi(array_pontos)
+        vor = Voronoi(array_pontos) # Calcula a localização de todas as arestas e vértices do diagrama de voronoi
 
         regions, vertices = voronoi_finite_polygons_2d(vor)
 
@@ -146,7 +146,8 @@ def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
     global cliques_total, pontos_voronoi, ponto_arrastando, posicao_inicial_arrasto
     
     for evento in pygame.event.get():
-        if evento.type == pygame.QUIT:
+        # Janela fechada
+        if evento.type == pygame.QUIT: 
             return False, modo_atual
 
         # Evento de clique do mouse
@@ -154,17 +155,19 @@ def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
             if modo_atual == 'EDICAO':
                 # Primeiro verifica se clicou próximo a um ponto existente
                 ponto_proximo = encontrar_ponto_proximo(evento.pos)
-                
+                # Se clicou próximo a um ponto existente, inicia o arrasto
                 if ponto_proximo is not None:
                     ponto_arrastando = ponto_proximo
                     posicao_inicial_arrasto = evento.pos
                     print(f"Iniciando arrasto do ponto {ponto_proximo + 1}")
                 else:
+                    # Se não clicou próximo a um ponto existente, adiciona um novo ponto
                     pontos_voronoi.append(evento.pos)
                     gerar_diagrama_voronoi(pontos_voronoi, largura_tela, altura_tela)
                     log_writer.writerow([obter_data_hora_brasileira(), 'criacao',
                                          evento.pos[0], evento.pos[1], f'poligono_{len(pontos_voronoi)}'])
                     cliques_total += 1
+
                     print(f"Ponto {len(pontos_voronoi)} adicionado: {evento.pos}")
                 
             elif modo_atual == 'SELECIONAR':
@@ -192,7 +195,7 @@ def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
         # Evento de soltar o mouse
         if evento.type == pygame.MOUSEBUTTONUP:
             if ponto_arrastando is not None:
-                # Finaliza o arrasto
+                # Finaliza o arrasto do ponto
                 log_writer.writerow([obter_data_hora_brasileira(), 'movimento_ponto', 
                                      pontos_voronoi[ponto_arrastando][0], pontos_voronoi[ponto_arrastando][1], 
                                      f'ponto_{ponto_arrastando + 1}_movido'])
@@ -213,8 +216,8 @@ def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
                     f"Trabalho 1: Gear Up! | Modo: {modo_atual} (Clique em um polígono)"
                 )
             elif evento.key == pygame.K_F12:
-                pygame.image.save(pygame.display.get_surface(), "screenshot.png")
-                print("Screenshot salva como 'screenshot.png'")
+                pygame.image.save(pygame.display.get_surface(), "images/screenshot.png")
+                print("Screenshot salva como 'images/screenshot.png'")
 
     return True, modo_atual
 
@@ -222,13 +225,14 @@ def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
 def encontrar_poligono_clicado(ponto_clique):
     """Encontra qual polígono do Voronoi foi clicado."""
     for poligono in poligonos_voronoi:
-        if ponto_em_poligono(ponto_clique, poligono):
+        if ponto_em_poligono_simples(ponto_clique, poligono['vertices']):
             return poligono
     return None
 
 def encontrar_ponto_proximo(posicao, tolerancia=15):
     """Encontra o ponto mais próximo de uma posição, dentro da tolerância."""
     for i, ponto in enumerate(pontos_voronoi):
+        # Calcula distância usando Teorema de Pitágoras
         distancia = math.sqrt((posicao[0] - ponto[0])**2 + (posicao[1] - ponto[1])**2)
         if distancia <= tolerancia:
             return i
@@ -249,6 +253,37 @@ def desenhar_tudo(tela, modo_atual):
             pygame.draw.polygon(tela, poligono['cor'], poligono['vertices'])
             # Desenha borda normal (sempre a mesma espessura)
             pygame.draw.polygon(tela, PRETO, poligono['vertices'], 2)
+
+
+        # ==============================================================================
+    # ### INÍCIO DA SEÇÃO DE DELAUNAY ###
+    # ==============================================================================
+    if len(pontos_voronoi) >= 4:
+        try:
+            # Converte os pontos para um array numpy
+            array_pontos = np.array(pontos_voronoi)
+            
+            # Calcula a Triangulação de Delaunay
+            delaunay = Delaunay(array_pontos)
+            
+            # 'delaunay.simplices' é uma lista de triângulos. 
+            # Cada triângulo é uma lista de índices dos pontos no 'array_pontos'.
+            for triangulo in delaunay.simplices:
+                # Pega as coordenadas dos três pontos do triângulo
+                p1 = pontos_voronoi[triangulo[0]]
+                p2 = pontos_voronoi[triangulo[1]]
+                p3 = pontos_voronoi[triangulo[2]]
+                
+                # Desenha as três arestas do triângulo
+                pygame.draw.line(tela, PRETO, p1, p2, 1)
+                pygame.draw.line(tela, PRETO, p2, p3, 1)
+                pygame.draw.line(tela, PRETO, p3, p1, 1)
+
+        except Exception as e:
+            print(f"Erro ao gerar Triangulação de Delaunay: {e}")
+    # ==============================================================================
+    # ### FIM DA SEÇÃO DE DELAUNAY ###
+    # ==============================================================================
     
     # Desenha os pontos centrais (sites)
     for i, ponto in enumerate(pontos_voronoi):
@@ -300,9 +335,6 @@ def ponto_em_poligono_simples(ponto_clique, vertices):
         
     return dentro
 
-def ponto_em_poligono(ponto_clique, poligono):
-    """Verifica se um ponto está dentro de um polígono usando o algoritmo Ray Casting."""
-    return ponto_em_poligono_simples(ponto_clique, poligono['vertices'])
 
 def main():
     global pontos_voronoi, poligonos_voronoi, ponto_arrastando, posicao_inicial_arrasto
@@ -333,10 +365,11 @@ def main():
             desenhar_tudo(tela, modo_atual)
             relogio.tick(60)
         
+        tempo_fim_edited = obter_data_hora_brasileira()
         tempo_fim = time.time()
         tempo_total = tempo_fim - tempo_inicio
-        log_writer.writerow([tempo_fim, 'fim_execucao', '', '', f'{tempo_total:.2f}'])
-        log_writer.writerow([tempo_fim, 'Total de Cliques', '', '', f'{cliques_total}'])
+        log_writer.writerow([tempo_fim_edited, 'fim_execucao', '', '', f'{tempo_total:.2f}'])
+        log_writer.writerow([tempo_fim_edited, 'Total de Cliques', '', '', f'{cliques_total}'])
         
         print(f"Tempo total: {tempo_total:.2f}s")
         print(f"Total de cliques: {cliques_total}")

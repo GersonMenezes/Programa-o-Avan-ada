@@ -1,0 +1,17 @@
+Ecologia - Modelagem de Territórios e Competição por Recursos
+Em um ecossistema, plantas e animais competem por recursos como água, luz solar e comida. O Diagrama de Voronoi é um modelo simples e eficaz para visualizar essa competição.
+
+O Problema: Como definir e visualizar o território de um animal ou a área de influência de uma árvore em uma floresta?
+
+A Solução com Voronoi:
+
+Territórios de Animais: Se os pontos (sites) forem os ninhos ou tocas de animais de uma mesma espécie, as regiões de Voronoi representarão o território de cada animal, 
+assumindo que eles controlam a área que está mais próxima de seu ninho.
+
+Competição de Plantas: Em uma floresta, os pontos podem ser os troncos das árvores. A região de Voronoi de cada árvore representa seu "espaço de crescimento", 
+ou seja, a área do solo onde suas raízes têm maior probabilidade de obter água e nutrientes por serem as mais próximas. 
+As bordas do diagrama mostram onde a competição entre duas árvores é mais acirrada.
+
+Resultado: Biólogos e ecologistas podem usar este modelo para estudar a dinâmica populacional, a distribuição de recursos e os efeitos da competição em um habitat.
+
+Por que é interessante? É uma aplicação elegante que conecta a geometria diretamente a processos e padrões do mundo natural.

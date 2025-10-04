@@ -1,0 +1,24 @@
+# Arquivos de cache e compilados do Python
+__pycache__/
+*.pyc
+
+# Pastas de ambiente virtual (muito importante ignorar!)
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Arquivos de log e dados gerados pelos seus scripts
+# Isso evita que a cada execução um novo log seja adicionado ao Git
+log_execucao.csv
+log_desempenho.csv
+
+
+# Pastas de configuração de IDEs e editores
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db

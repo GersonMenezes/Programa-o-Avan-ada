@@ -103,7 +103,7 @@ def gerar_diagrama_voronoi(pontos, largura_tela, altura_tela):
     global poligonos_voronoi
     poligonos_voronoi = []
 
-    if len(pontos) < 2:  # Voronoi precisa de no mínimo 2 pontos
+    if len(pontos) < 4:  # Voronoi precisa de no mínimo 4 pontos
         poligonos_voronoi = []
         return
 
@@ -117,9 +117,6 @@ def gerar_diagrama_voronoi(pontos, largura_tela, altura_tela):
         box = np.array([[0, 0], [largura_tela, 0], 
                         [largura_tela, altura_tela], [0, altura_tela]])
 
-        if len(pontos) < 4:
-            poligonos_voronoi = []
-            return
         for i, region in enumerate(regions):
             polygon = vertices[region]
             # Faz interseção com a tela
@@ -141,7 +138,7 @@ def gerar_diagrama_voronoi(pontos, largura_tela, altura_tela):
         print(f"Erro ao gerar Diagrama de Voronoi: {e}")
         poligonos_voronoi = []
 
-
+# Processa os eventos do mouse e teclado
 def processar_eventos(log_writer, modo_atual, largura_tela, altura_tela):
     global cliques_total, pontos_voronoi, ponto_arrastando, posicao_inicial_arrasto
     
@@ -229,6 +226,26 @@ def encontrar_poligono_clicado(ponto_clique):
             return poligono
     return None
 
+def ponto_em_poligono_simples(ponto_clique, vertices):
+    """Verifica se um ponto está dentro de um polígono usando o algoritmo Ray Casting."""
+    x, y = ponto_clique
+    n = len(vertices)
+    dentro = False
+    
+    p1x, p1y = vertices[0]
+    for i in range(n + 1):
+        p2x, p2y = vertices[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
+                    if p1y != p2y:
+                        x_intersecao = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                    if p1x == p2x or x <= x_intersecao:
+                        dentro = not dentro
+        p1x, p1y = p2x, p2y
+        
+    return dentro
+
 def encontrar_ponto_proximo(posicao, tolerancia=15):
     """Encontra o ponto mais próximo de uma posição, dentro da tolerância."""
     for i, ponto in enumerate(pontos_voronoi):
@@ -315,25 +332,6 @@ def obter_data_hora_brasileira():
     data_hora_brasil = datetime.fromtimestamp(timestamp).strftime('%d/%m/%Y %H:%M:%S.%f')[:-3]
     return data_hora_brasil
 
-def ponto_em_poligono_simples(ponto_clique, vertices):
-    """Verifica se um ponto está dentro de um polígono usando o algoritmo Ray Casting."""
-    x, y = ponto_clique
-    n = len(vertices)
-    dentro = False
-    
-    p1x, p1y = vertices[0]
-    for i in range(n + 1):
-        p2x, p2y = vertices[i % n]
-        if y > min(p1y, p2y):
-            if y <= max(p1y, p2y):
-                if x <= max(p1x, p2x):
-                    if p1y != p2y:
-                        x_intersecao = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                    if p1x == p2x or x <= x_intersecao:
-                        dentro = not dentro
-        p1x, p1y = p2x, p2y
-        
-    return dentro
 
 
 def main():

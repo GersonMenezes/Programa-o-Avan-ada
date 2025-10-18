@@ -1,0 +1,4 @@
+A envoltória convexa delimita o diagrama de Voronoi.
+O fecho convexo dos pontos define os limites onde o diagrama de Voronoi tem regiões infinitas.
+Pontos dentro do convex hull geram regiões finitas no Voronoi.
+Pontos na borda do convex hull geram regiões infinitas.

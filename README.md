@@ -10,7 +10,7 @@ Este projeto implementa uma aplicação interativa para visualização do **Diag
 |:--------:|:---------------:|:-----------------------------------------------------|:------:|
 | 1 | 17/09/25, 18:00 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada) | ✅ Concluído |
 | 2 | 03/10/25, 18:00 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada) | ✅ Concluído |
-| 3 | - | - | ⏳ Pendente |
+| 3 | 18/10/25, 18:00 | - | ✅ Concluído |
 | 15 | - | - | ⏳ Pendente |
 
 ---

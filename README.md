@@ -1,6 +1,6 @@
-# 📊 Diagrama de Voronoi - Análise Computacional
+# 📊 Programação Avançada
 
-Este projeto implementa uma aplicação interativa para visualização do **Diagrama de Voronoi** e sua estrutura dual, a **Triangulação de Delaunay**. Além da visualização, o projeto inclui scripts para análise de dados de interação do usuário e análise de desempenho computacional do algoritmo de geração.
+Este projeto implementa vários problemas relacionados à computação como Convex Hull e Minkowski Addition
 
 ---
 

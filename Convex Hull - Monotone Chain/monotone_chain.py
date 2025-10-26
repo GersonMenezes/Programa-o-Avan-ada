@@ -57,7 +57,7 @@ def convex_hull(points):
                 lower.pop()  # Remove o ponto do meio (b)
             else:
                 break
-        lower.append(p)
+        lower.append(p) # Será testado
     
     # Upper hull (mesma lógica, ordem reversa)
     upper = []
@@ -72,7 +72,7 @@ def convex_hull(points):
     
     # Junta lower e upper, removendo duplicatas das pontas
     return lower[:-1] + upper[:-1]
-
+# Função para calcular o produto vetorial, < 0 significa horário
 def cross(a, b, c):
     """Produto vetorial (determinante) dos vetores AB e AC"""
     return (b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0])

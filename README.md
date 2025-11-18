@@ -13,6 +13,7 @@ Este projeto implementa vários problemas relacionados à computação como Conv
 | 3 | 18/10/25, 15:30 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Convex%20Hull%20-%20Monotone%20Chain) | ✅ Concluído |
 | 4 | 26/10/25, 19:30 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Minkowski%20Addition) | ✅ Concluído |
 | 5 | 09/11/25, 10:15 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Navegation) | ✅ Concluído |
+| 6 | 18/11/25, 17:15 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Fabrica) | ✅ Concluído |
 | 15 | - | - | ⏳ Pendente |
 
 ## Dependências:

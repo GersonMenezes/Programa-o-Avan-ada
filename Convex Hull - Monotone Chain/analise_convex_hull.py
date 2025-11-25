@@ -68,38 +68,8 @@ def generate_points(n, distribution='uniform', scale=1000):
         y = np.random.randn(n) * std_dev + center
         return np.column_stack((x, y)).tolist()
 
-def polygon_area(polygon):
-    """Calcula a área de um polígono usando a Fórmula de Shoelace"""
-    if len(polygon) < 3:
-        return 0
-    points = polygon + [polygon[0]]
-    area = 0.0
-    for i in range(len(polygon)):
-        area += (points[i][0] * points[i+1][1]) - (points[i+1][0] * points[i][1])
-    return abs(area) / 2.0
 
-# --- EXPERIMENTOS E GRÁFICOS (sem alterações) ---
-
-print("Iniciando análise com o código corrigido...")
-
-# --- Gráfico 0: Exemplo Visual ---
-N_visual = 150
-points_visual = generate_points(N_visual, 'uniform')
-hull_visual = convex_hull(points_visual)
-
-x_all, y_all = zip(*points_visual)
-if hull_visual: # Adiciona verificação para caso de poucos pontos
-    hull_plot = hull_visual + [hull_visual[0]] # Fecha o polígono para o plot
-    x_hull, y_hull = zip(*hull_plot)
-    plt.figure(figsize=(7, 7))
-    plt.plot(x_all, y_all, 'bo', label='Pontos', markersize=3)
-    plt.plot(x_hull, y_hull, 'r-o', label='Hull Convexo', markersize=4)
-    plt.title(f'Exemplo de Hull Convexo (CORRIGIDO) (N={N_visual})')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.legend()
-    plt.grid(True)
-
+# --- EXPERIMENTOS E GRÁFICOS ---
 
 # --- Gráfico 1 e 3: Custo Computacional e Crescimento ---
 N_values = [100, 500, 1000, 5000, 10000, 25000, 50000, 75000]
@@ -117,9 +87,8 @@ for n in N_values:
     times.append(end_time - start_time)
     hull_sizes.append(len(hull))
     inside_counts.append(n - len(hull))
-    areas.append(polygon_area(hull))
 
-# Gráfico 1: Custo Computacional
+# Gráfico 2: Custo Computacional
 plt.figure(figsize=(10, 6))
 plt.plot(N_values, times, 'o-', label='Tempo Medido (Monotone Chain)')
 if len(N_values) > 1:
@@ -134,7 +103,7 @@ plt.legend()
 plt.grid(True)
 
 
-# --- Gráfico 2: Pontos Dentro vs. Fora ---
+# --- Gráfico 3: Pontos Dentro vs. Fora ---
 plt.figure(figsize=(10, 6))
 p1 = plt.bar(N_values, hull_sizes, width=np.diff(N_values + [N_values[-1]*1.1])*0.8, label='Pontos no Hull (Vértices)')
 p2 = plt.bar(N_values, inside_counts, bottom=hull_sizes, width=np.diff(N_values + [N_values[-1]*1.1])*0.8, label='Pontos Internos / Colineares')
@@ -146,7 +115,7 @@ plt.yscale('log')
 plt.legend()
 plt.grid(True)
 
-# --- Gráfico 3: Informação Extra 1 - Proporção de Pontos no Hull ---
+# --- Gráfico 4: Informação Extra 1 - Proporção de Pontos no Hull ---
 plt.figure(figsize=(10, 6))
 proportion_hull = [h / n for h, n in zip(hull_sizes, N_values)]
 plt.plot(N_values, proportion_hull, 'g-o')
@@ -156,28 +125,38 @@ plt.ylabel('Proporção (Pontos no Hull / Total de Pontos)')
 plt.xscale('log')
 plt.grid(True)
 
-# --- Gráfico 4: Informação Extra 2 - Área do Hull ---
-plt.figure(figsize=(10, 6))
-plt.plot(N_values, areas, 'm-o')
-plt.title('Informação Extra: Área do Hull vs. N (Distribuição Uniforme em [0,1000]x[0,1000])')
-plt.xlabel('Número Total de Pontos (N)')
-plt.ylabel('Área do Hull Convexo')
-plt.axhline(y=1000*1000, color='gray', linestyle='--', label='Área Máxima (1.000.000)')
-plt.legend()
-plt.grid(True)
 
 # --- Gráfico 5: Custo por Distribuição ---
 N_fixed = 50000
+N_visual = 150
 distributions = ['uniform', 'circle', 'line', 'cluster']
 dist_times = []
 print(f"Calculando Gráfico 2 (Custo por Distribuição) com N={N_fixed}...")
 for dist in distributions:
     print(f"  Testando distribuição: {dist}")
     points = generate_points(N_fixed, dist)
+    #np.random.shuffle(points)
     start_time = time.perf_counter()
     hull = convex_hull(points)
     end_time = time.perf_counter()
     dist_times.append(end_time - start_time)
+    print(f"Tempo de execução: {end_time - start_time} segundos para Distribuição: {dist}")
+
+    '''Visualização do Hull Convexo para cada distribuição'''
+    points_visual = generate_points(N_visual, dist)
+    hull_visual = convex_hull(points_visual)
+    x_all, y_all = zip(*points_visual)
+    if hull_visual: # Adiciona verificação para caso de poucos pontos
+        hull_plot = hull_visual + [hull_visual[0]] # Fecha o polígono para o plot
+        x_hull, y_hull = zip(*hull_plot)
+        plt.figure(figsize=(7, 7))
+        plt.plot(x_all, y_all, 'bo', label='Pontos', markersize=3)
+        plt.plot(x_hull, y_hull, 'r-o', label='Hull Convexo', markersize=4)
+        plt.title(f'Exemplo de Hull Convexo (N={N_visual}) - Distribuição: {dist}')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.legend()
+        plt.grid(True)
 
 plt.figure(figsize=(10, 6))
 plt.bar(distributions, dist_times, color=['blue', 'green', 'red', 'purple'])

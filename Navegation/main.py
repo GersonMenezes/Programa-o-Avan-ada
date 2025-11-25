@@ -47,15 +47,15 @@ def desenhar_grid(tela):
 # --- Converter clique para célula ---
 def obter_celula(pos):
     area = get_area_desenho()
-    if not area.collidepoint(pos):
+    if not area.collidepoint(pos): # Verifica se o clique está dentro da área de desenho
         return None
     largura_celula = area.width / GRID_RESOLUCAO
     altura_celula = area.height / GRID_RESOLUCAO
-    col = int((pos[0] - area.left) // largura_celula)
+    col = int((pos[0] - area.left) // largura_celula) # O resto diz quantas células cabem na largura
     lin = int((pos[1] - area.top) // altura_celula)
     return (lin, col)
 
-# --- Centro da célula ---
+# --- Centro da célula para desenhar pontos ---
 def centro_celula(lin, col):
     area = get_area_desenho()
     largura_celula = area.width / GRID_RESOLUCAO
@@ -64,21 +64,6 @@ def centro_celula(lin, col):
     y = area.top + lin * altura_celula + altura_celula / 2
     return (int(x), int(y))
 
-# --- BFS menor caminho ---
-def menor_caminho(inicio, fim, obstaculos):
-    filas = deque([(inicio, [inicio])])
-    visitados = {inicio}
-    direcoes = [(1,0), (-1,0), (0,1), (0,-1)]
-    while filas:
-        (lin, col), caminho = filas.popleft()
-        if (lin, col) == fim:
-            return caminho
-        for dl, dc in direcoes:
-            nl, nc = lin + dl, col + dc
-            if 0 <= nl < GRID_RESOLUCAO and 0 <= nc < GRID_RESOLUCAO and (nl, nc) not in visitados and (nl, nc) not in obstaculos:
-                visitados.add((nl, nc))
-                filas.append(((nl, nc), caminho + [(nl, nc)]))
-    return None
 
 # --- Processar eventos ---
 def processar_eventos():
@@ -129,7 +114,7 @@ def adicionar_ponto(cel):
     else:
         pontos_fim.append(cel)
 
-# --- Gerar caminhos ---
+# --- Gerar caminhos entre dois pares de pontos ---
 def gerar_caminhos():
     global caminhos
     caminhos = []
@@ -139,6 +124,22 @@ def gerar_caminhos():
         caminho = menor_caminho(pontos_inicio[i], pontos_fim[i], obstaculos)
         if caminho:
             caminhos.append((caminho, cor))
+
+# --- BFS menor caminho ---
+def menor_caminho(inicio, fim, obstaculos):
+    filas = deque([(inicio, [inicio])])
+    visitados = {inicio}
+    direcoes = [(1,0), (-1,0), (0,1), (0,-1)]
+    while filas:
+        (lin, col), caminho = filas.popleft()
+        if (lin, col) == fim:
+            return caminho
+        for dl, dc in direcoes:
+            nl, nc = lin + dl, col + dc
+            if 0 <= nl < GRID_RESOLUCAO and 0 <= nc < GRID_RESOLUCAO and (nl, nc) not in visitados and (nl, nc) not in obstaculos:
+                visitados.add((nl, nc))
+                filas.append(((nl, nc), caminho + [(nl, nc)]))
+    return None
 
 # --- Limpar tudo e voltar ao modo obstáculos ---
 def limpar_tudo():

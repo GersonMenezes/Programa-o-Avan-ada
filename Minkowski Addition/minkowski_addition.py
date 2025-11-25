@@ -9,11 +9,11 @@ import math
 
 # --- Variáveis Globais ---
 pontos = []
-robo_forma = []
-robo_desenho = []
+robo_forma = [] # Forma normalizada do robô
+robo_desenho = [] # Robo Original
 obstaculos = []
-nuvens_de_pontos = []
-envoltorias_soma = []
+nuvens_de_pontos = [] # Lista para armazenar as "poeiras" de pontos de cada obstáculo
+envoltorias_soma = [] # Lista para armazenar as envoltórias convexas das somas de cada obstáculo
 tela = None
 estado_app = "ROBO"
 
@@ -38,7 +38,6 @@ def get_area_desenho():
     margem_superior = 50
     margem = 20
     return pygame.Rect(margem, margem_superior, largura - 2 * margem, altura - margem_superior - margem)
-
 
 def distancia_pontos(p1, p2):
     """Calcula a distância euclidiana entre dois pontos."""
@@ -97,8 +96,8 @@ def convex_hull(points):
 def cross(a, b, c):
     return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 
-# --- FUNÇÃO MODIFICADA ---
-def calcular_soma_minkowski(log_writer): # <<< Aceita log_writer
+# --- Calculo da Soma de Minkowski ---
+def calcular_soma_minkowski(log_writer):
     """Calcula a soma de Minkowski para CADA obstáculo individualmente e LOGA as distâncias."""
     global nuvens_de_pontos, envoltorias_soma, estado_app
 
@@ -112,7 +111,7 @@ def calcular_soma_minkowski(log_writer): # <<< Aceita log_writer
     
     timestamp = time.time() # Timestamp para o grupo de eventos
 
-    # --- Parte 1: Cálculo da Soma (como antes) ---
+    # --- Parte 2: Soma das coordenadas do robô com as coordenadas de cada obstáculo ---
     for i, obs in enumerate(obstaculos):
         pontos_soma_local = []
         for p_robo in robo_forma:
@@ -132,7 +131,7 @@ def calcular_soma_minkowski(log_writer): # <<< Aceita log_writer
 
     print(f"Cálculo finalizado. {len(envoltorias_soma)} envoltórias geradas.")
     
-    # --- Parte 2: Cálculo e Log das Distâncias (MODIFICADA) ---
+    # --- Parte 2: Cálculo e Log das Distâncias ---
     print("Calculando e registrando distâncias mínimas (vértice-a-vértice)...")
     
     if not robo_desenho or not obstaculos or not envoltorias_soma:

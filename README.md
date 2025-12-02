@@ -15,6 +15,7 @@ Este projeto implementa vários problemas relacionados à computação como Conv
 | 5 | 09/11/25, 10:15 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Navegation) | ✅ Concluído |
 | 6 | 18/11/25, 17:15 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Fabrica) | ✅ Concluído |
 | 7 | 25/11/25, 13:35 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Singleton) | ✅ Concluído |
+| 8 | 02/12/25, 20:55 | [Repositório](https://github.com/GersonMenezes/Programa-o-Avan-ada/tree/main/Command) | ✅ Concluído |
 | 15 | - | - | ⏳ Pendente |
 
 ## Dependências:
@@ -31,4 +32,3 @@ pip install matplotlib
 ### instalar pandas
 pip install pandas
 
-## *Cada pasta tem um vídeo mostrando a implementação feita e como rodar

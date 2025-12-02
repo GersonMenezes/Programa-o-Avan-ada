@@ -10,7 +10,7 @@ class EntidadeGrid(ABC):
     @abstractmethod
     def desenhar(self, tela, rect): pass
 
-    # Novo: Por padrão, entidades não dão dano
+    # Por padrão, entidades não dão dano
     def get_dano(self):
         return 0
 

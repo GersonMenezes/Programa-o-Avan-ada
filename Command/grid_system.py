@@ -45,7 +45,7 @@ class GridSystem:
             # Largura = Altura * (sqrt(3)/2)
             self.largura_celula = self.altura_celula * (sqrt(3) / 2)
         else:
-            # Retangular: base simples (será refinado no get_rect_celula)
+            # Retangular: base simples
             self.largura_celula = self.rect_area.width / self.resolucao
             self.altura_celula = self.rect_area.height / self.resolucao
 
@@ -105,10 +105,6 @@ class GridSystem:
             return (int(cx), int(cy))
 
     def get_rect_celula(self, grid_pos):
-        """
-        CORREÇÃO DOS FUROS RETANGULARES:
-        Calcula a posição atual e a próxima para preencher exatamente o pixel.
-        """
         lin, col = grid_pos
         
         if self.geometria == "RETANGULAR":
@@ -138,10 +134,6 @@ class GridSystem:
         return 0 <= lin < self.resolucao and 0 <= col < self.resolucao
 
     def get_pontos_hexagonais(self, lin, col):
-        """
-        Gera Hexágono POINTY-TOPPED (Ponta pra cima).
-        Isso corrige a sobreposição ao usar offset de linha.
-        """
         cx, cy = self.get_centro_celula((lin, col))
         
         # Tamanho do lado (Raio) = Altura / 2
@@ -207,7 +199,6 @@ class GridSystem:
 
         '''# 3. Pontos (Início/Fim)
         for _ in range(n_pares):
-            # ... (código de pontos mantido igual) ...
             l1, c1 = random.randint(0, self.resolucao-1), random.randint(0, self.resolucao-1)
             l2, c2 = random.randint(0, self.resolucao-1), random.randint(0, self.resolucao-1)
             if (l1,c1) not in self.obstaculos and (l2,c2) not in self.obstaculos:

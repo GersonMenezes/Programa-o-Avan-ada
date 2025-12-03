@@ -38,13 +38,12 @@ class GameEngine(Observer): # GameEngine observa o Agente
         self.agente = Agente((1, 1))
         self.agente.attach(self)
 
-        # --- CONTROLE DE REPETIÇÃO DE TECLA (NOVO) ---
+        # --- CONTROLE DE REPETIÇÃO DE TECLA ---
         self.tempo_ultimo_movimento = 0 # Tempo em ms do último comando executado
         self.atraso_movimento_ms = 200  # Atraso desejado (0.2 segundos
 
     # --- IMPLEMENTAÇÃO DO OBSERVER ---
     def update(self, evento, dados):
-        # A lógica de dano saiu daqui e foi para o processar_eventos (pré-movimento)
         if evento == "morreu":
             print(">>> GAME OVER: Agente morreu! Reiniciando fase...")
             self.agente.vida = CONFIG["VIDA_INICIAL"]
@@ -60,7 +59,6 @@ class GameEngine(Observer): # GameEngine observa o Agente
             elif evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_ESCAPE: self.rodando = False
                 
-                # Obtém o tempo atual do jogo
                 tempo_atual = pygame.time.get_ticks() 
 
                 # --- LÓGICA DE MOVIMENTO E COLISÃO ---
@@ -70,7 +68,7 @@ class GameEngine(Observer): # GameEngine observa o Agente
                 if evento.key == pygame.K_LEFT:  dx, dy = 0, -1
                 if evento.key == pygame.K_RIGHT: dx, dy = 0, 1
                 
-                # Se houve tentativa de movimento E o atraso de tempo foi atingido
+                # Se houve tentativa de movimento e o atraso de tempo foi atingido
                 if (dx != 0 or dy != 0) and (tempo_atual - self.tempo_ultimo_movimento > self.atraso_movimento_ms): 
                     
                     nova_pos = (self.agente.pos[0] + dx, self.agente.pos[1] + dy)
@@ -178,7 +176,7 @@ class GameEngine(Observer): # GameEngine observa o Agente
             pontos_pixel = [self.grid.get_centro_celula(p) for p in caminho]
             if len(pontos_pixel) > 1: pygame.draw.lines(self.tela, cor, False, pontos_pixel, 4)
 
-        # 4. Desenhar AGENTE (Novo)
+        # 4. Desenhar AGENTE
         self.agente.desenhar(self.tela, self.grid.get_rect_celula(self.agente.pos))
 
         # UI
